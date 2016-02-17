@@ -4,12 +4,20 @@ app.config(function($stateProvider) {
 	$stateProvider.state('main', {
 		url: '/',
 		templateUrl: '/main.html',
-		controller: 'MainController'
-			// RESOLVE!
+		controller: 'MainController',
+		resolve: {
+			posts: function (Post, users) {
+				return Post.findAll({});
+			},
+			users: function (User) {
+				return User.findAll();
+			}
+			
+		}
 	})
 })
 
-app.controller('MainController', function($scope) {
+app.controller('MainController', function($scope, posts, Post) {
 
  	/*
 		TODOS: 
@@ -18,6 +26,16 @@ app.controller('MainController', function($scope) {
 		and retrieve the data there)
 
  	*/
+ 	var dataInJsDataCache = Post.getAll()
+	//console.log('data in jsdata cache: ', dataInJsDataCache)
+
+	var postData = Post.getAll()
+	Post.ejectAll() // removes all the posts from the data store
+	Post.inject(postData)  // adds them back
+	console.log(Post.getAll())
+
+ 	$scope.allPosts = posts;
+ 	//console.log('posts: ', posts);
 })
 
 
